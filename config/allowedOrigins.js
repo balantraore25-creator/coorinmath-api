@@ -1,5 +1,5 @@
 const allowedOrigins = [
-  'https://coorinmath.onrender.com'
+  'https://coorinmath.onrender.com/api'
 ]
 
 module.exports = allowedOrigins
