@@ -41,6 +41,16 @@ app.use('/', express.static(path.join(__dirname, 'public'), {
   immutable: true
 }))
 
+// ✅ Route racine explicite (évite la 404 sur /)
+app.get('/', (req, res) => {
+  res.json({
+    status: 'ok',
+    service: 'CoorinMath API',
+    base: '/api',
+    uptime: process.uptime()
+  })
+})
+
 // 🧭 Routes principales
 app.use('/api', rootRoutes)
 app.use('/api/auth', authRoutes)
@@ -49,7 +59,12 @@ app.use('/api/courses', courseRoutes)
 
 // ✅ Route de santé (health check)
 app.get('/health', (req, res) => {
-  res.json({ status: 'ok', service: 'CoorinMath API', uptime: process.uptime() })
+  res.json({
+    status: 'ok',
+    service: 'CoorinMath API',
+    uptime: process.uptime(),
+    timestamp: Date.now()
+  })
 })
 
 // 🚫 404 handler (doit être après toutes les routes)
