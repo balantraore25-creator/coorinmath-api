@@ -1,26 +1,35 @@
-const express = require('express')
-const router = express.Router()
-const userController = require('../controllers/usersController')
-const validateRequest = require('../middleware/validateRequest')
-const { createUserSchema, updateUserSchema, userIdParamSchema } = require('../schemas/userSchemas')
-const verifyJWT = require('../middleware/verifyJWT')
+const express = require('express');
+const router = express.Router();
 
-router.use(verifyJWT)
+const userController = require('../controllers/usersController');
+const validateRequest = require('../middleware/validateRequest');
+const verifyJWT = require('../middleware/verifyJWT');
 
+const {
+  createUserSchema,
+  updateUserSchema,
+  userIdParamSchema
+} = require('../schemas/userSchemas');
 
-router.route('/')
-  .get(userController.getAllUsers)
-  .post(validateRequest(createUserSchema), userController.createNewUser)
+// 🔐 Middleware global : protège toutes les routes
+router.use(verifyJWT);
 
-router.route('/:id')
-  .patch(
-    validateRequest(userIdParamSchema, 'params'),
-    validateRequest(updateUserSchema),
-    userController.updateUser
-  )
-  .delete(
-    validateRequest(userIdParamSchema, 'params'),
-    userController.deleteUser
-  )
+// 👥 Route principale : /users
+router.get('/', userController.getAllUsers);
+router.post('/', validateRequest(createUserSchema), userController.createNewUser);
 
-module.exports = router
+// 🛠️ Routes paramétrées : /users/:id
+router.patch(
+  '/:id',
+  validateRequest(userIdParamSchema, 'params'),
+  validateRequest(updateUserSchema),
+  userController.updateUser
+);
+
+router.delete(
+  '/:id',
+  validateRequest(userIdParamSchema, 'params'),
+  userController.deleteUser
+);
+
+module.exports = router;
