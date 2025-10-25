@@ -19,7 +19,7 @@ const courseSchema = new mongoose.Schema(
     link: {
       type: String,
       required: true,
-      match: /^https?:\/\/.+/ // valide que c’est bien une URL
+      match: /^\/dash\/courses\/[a-z0-9-]+$/i // ex: /dash/courses/congruence
     },
     completed: {
       type: Boolean,
