@@ -5,6 +5,7 @@ const cookieParser = require('cookie-parser')
 const cors = require('cors')
 const mongoose = require('mongoose')
 
+// 📦 Configs & middlewares personnalisés
 const connectDB = require('./config/dbConn')
 const { logger, logEvents } = require('./middleware/logger')
 const errorHandler = require('./middleware/errorHandler')
@@ -17,13 +18,16 @@ connectDB()
 const app = express()
 const PORT = process.env.PORT || 3500
 
+// 🛡️ Corrige le problème de proxy pour Render/Heroku
+app.set('trust proxy', true)
+
 // 🌐 Middlewares globaux
 app.use(logger)
 app.use(cors(corsOptions))
 app.use(express.json())
 app.use(cookieParser())
 
-// 📁 Fichiers statiques (ex: frontend build ou assets publics)
+// 📁 Fichiers statiques
 app.use('/static', express.static(path.join(__dirname, 'public'), {
   dotfiles: 'deny',
   etag: false,
@@ -31,16 +35,16 @@ app.use('/static', express.static(path.join(__dirname, 'public'), {
   immutable: true
 }))
 
-// 🧭 Routes principales (sans préfixe /api)
+// 🧭 Routes principales
 app.use('/', require('./routes/root'))
 app.use('/auth', require('./routes/authRoutes'))
 app.use('/users', require('./routes/userRoutes'))
 app.use('/courses', require('./routes/courseRoutes'))
 
-// 🚫 404 handler
+// 🚫 Gestion des routes non trouvées
 app.use(notFound)
 
-// 🛠️ Error handler
+// 🛠️ Gestion des erreurs
 app.use(errorHandler)
 
 // 🚀 Lancement du serveur après connexion MongoDB
@@ -49,6 +53,7 @@ mongoose.connection.once('open', () => {
   app.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`))
 })
 
+// 🔥 Gestion des erreurs MongoDB
 mongoose.connection.on('error', err => {
   console.error('❌ MongoDB connection error:', err)
   logEvents(`${err.no}: ${err.code}\t${err.syscall}\t${err.hostname}`, 'mongoErrLog.log')
