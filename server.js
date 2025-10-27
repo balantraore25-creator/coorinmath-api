@@ -19,7 +19,7 @@ const app = express()
 const PORT = process.env.PORT || 3500
 
 // 🛡️ Corrige le problème de proxy pour Render/Heroku
-app.set('trust proxy', true)
+app.set('trust proxy', 1)
 
 // 🌐 Middlewares globaux
 app.use(logger)
