@@ -1,6 +1,6 @@
 const Joi = require('joi')
 
-// Pour POST /users
+// 📌 Pour POST /users
 const createUserSchema = Joi.object({
   username: Joi.string()
     .min(3)
@@ -22,19 +22,25 @@ const createUserSchema = Joi.object({
 
   roles: Joi.array()
     .items(Joi.string())
-    .default(['Apprenant']) // 👈 correspond au default du modèle Mongoose
+    .default(['Apprenant'])
     .messages({
       'array.base': 'Les rôles doivent être un tableau de chaînes',
     }),
 
   active: Joi.boolean()
-    .default(true) // 👈 correspond au default du modèle Mongoose
+    .default(true)
     .messages({
       'boolean.base': 'Le champ "active" doit être un booléen',
     }),
+
+  refreshToken: Joi.string()
+    .allow(null, '') // peut être vide ou null au départ
+    .messages({
+      'string.base': 'Le refreshToken doit être une chaîne de caractères',
+    }),
 })
 
-// Pour PATCH /users/:id
+// 📌 Pour PATCH /users/:id
 const updateUserSchema = Joi.object({
   username: Joi.string()
     .min(3)
@@ -60,9 +66,15 @@ const updateUserSchema = Joi.object({
     .messages({
       'boolean.base': 'Le champ "active" doit être un booléen',
     }),
-}).min(1) // 👈 assure qu’au moins un champ est présent
 
-// Pour valider l’ID MongoDB dans les params
+  refreshToken: Joi.string()
+    .allow(null, '')
+    .messages({
+      'string.base': 'Le refreshToken doit être une chaîne de caractères',
+    }),
+}).min(1)
+
+// 📌 Pour valider l’ID MongoDB dans les params
 const userIdParamSchema = Joi.object({
   id: Joi.string()
     .length(24)
@@ -80,6 +92,7 @@ module.exports = {
   updateUserSchema,
   userIdParamSchema,
 }
+
 
 
 /*const Joi = require('joi')
